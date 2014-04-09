@@ -3,7 +3,7 @@
 package watch
 
 import (
-	"github.com/ActiveState/tail/util"
+	"github.com/dim/tail/util"
 	"launchpad.net/tomb"
 	"os"
 	"time"

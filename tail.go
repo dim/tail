@@ -5,8 +5,8 @@ package tail
 import (
 	"bufio"
 	"fmt"
-	"github.com/ActiveState/tail/util"
-	"github.com/ActiveState/tail/watch"
+	"github.com/dim/tail/util"
+	"github.com/dim/tail/watch"
 	"io"
 	"io/ioutil"
 	"launchpad.net/tomb"
@@ -170,8 +170,17 @@ func (tail *Tail) reopen() error {
 }
 
 func (tail *Tail) readLine() ([]byte, error) {
-	line, _, err := tail.reader.ReadLine()
-	return line, err
+	line, isPrefix, err := tail.reader.ReadLine()
+	if !isPrefix {
+		return line, err
+	}
+
+	buf := append([]byte(nil), line...)
+	for isPrefix && err == nil {
+		line, isPrefix, err = tail.reader.ReadLine()
+		buf = append(buf, line...)
+	}
+	return buf, err
 }
 
 func (tail *Tail) tailFileSync() {
